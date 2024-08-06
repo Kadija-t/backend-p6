@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 
 const booksRoutes = require('./routes/books');
+const userRoutes = require('./routes/user');
 
 mongoose.connect('mongodb+srv://player01:0107@cluster1.zpbiikn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1', {
         useNewUrlParser: true,
@@ -24,5 +25,6 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 app.use('/api/book', booksRoutes);
+app.use('/api/auth', userRoutes);
 
 module.exports = app;
