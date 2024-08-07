@@ -3,11 +3,11 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 const path = require('path');
-
+require('dotenv').config()
 const booksRoutes = require('./routes/books');
 const userRoutes = require('./routes/user');
 
-mongoose.connect('mongodb+srv://player01:0107@cluster1.zpbiikn.mongodb.net/book?retryWrites=true&w=majority&appName=Cluster1', {
+mongoose.connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })

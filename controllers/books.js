@@ -75,15 +75,26 @@ exports.deleteBook = (req, res, next) => {
 };
 
 exports.getAllBooks = (req, res, next) => {
-  console.log('affciher les livres');
   Book.find().then(
     (books) => {
-      console.log('Livres récupérés avec succès', books);
       res.status(200).json(books);
     }
   ).catch(
     (error) => {
-      console.error('Erreur lors de la récupération des livres :', error);
+      res.status(400).json({
+        error: error
+      });
+    }
+  );
+};
+
+exports.getBestRating = (req, res, next) => {
+  Book.find().then(
+    (books) => {
+      res.status(200).json(books);
+    }
+  ).catch(
+    (error) => {
       res.status(400).json({
         error: error
       });
