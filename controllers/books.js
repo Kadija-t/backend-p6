@@ -95,7 +95,7 @@ exports.getBestRating = (req, res, next) => {
     }
   ).catch(
     (error) => {
-      res.status(400).json({
+      res.status(401).json({
         error: error
       });
     }
