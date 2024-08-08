@@ -87,17 +87,14 @@ exports.getAllBooks = (req, res, next) => {
     }
   );
 };
-
-exports.getBestRating = (req, res, next) => {
-  Book.find().then(
-    (books) => {
-      res.status(200).json(books);
-    }
-  ).catch(
-    (error) => {
-      res.status(401).json({
-        error: error
-      });
-    }
-  );
+exports.getBestRating = async (req, res, next) => {
+  try {
+    let topThreeBestRatedBooks = await Book.find({}).sort({ rating: -1, _id: 1})
+   .limit(2);
+    res.status(200).json(topThreeBestRatedBooks);
+  } catch (error) {
+    res.status(401).json({
+      error: error
+    });
+  }
 };
