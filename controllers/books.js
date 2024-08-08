@@ -89,8 +89,8 @@ exports.getAllBooks = (req, res, next) => {
 };
 exports.getBestRating = async (req, res, next) => {
   try {
-    let topThreeBestRatedBooks = await Book.find({}).sort({ rating: -1, _id: 1})
-   .limit(2);
+    let topThreeBestRatedBooks = await Book.find({}).sort({ averageRating: -1, _id: 1})
+   .limit(3);
     res.status(200).json(topThreeBestRatedBooks);
   } catch (error) {
     res.status(401).json({
