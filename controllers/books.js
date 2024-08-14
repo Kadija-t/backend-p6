@@ -65,28 +65,34 @@ exports.modifyBook = (req, res, next) => {
     });
 };
 
-// exports.modifyBook = (req, res, next) => {
-//   const bookObject = req.file ? {
-//       ...JSON.parse(req.body.book),
-//       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-//   } : { ...req.body };
+// exports.deleteBook = (req, res, next) => {
+//   Book.findOne({ _id: req.params.id })
+//     .then(book => {
+//       if (!book) {
+//         return res.status(404).json({ message: 'Livre non trouvé' });
+//       }
 
-//   delete bookObject._userId;
-//   Book.findOne({_id: req.params.id})
-//       .then((book) => {
-//           if (book.userId != req.auth.userId) {
-//               res.status(401).json({ message : 'Not authorized'});
-//           } else {
-//               Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
-//               .then(() => res.status(200).json({message : 'Livre modifié!'}))
-//               .catch(error => res.status(401).json({ error }));
-//           }
-//       })
-//       .catch((error) => {
-//           res.status(400).json({ error });
+//       if (book.userId != req.auth.userId) {
+//         return res.status(401).json({ message: 'Not authorized' });
+//       }
+
+//       const filename = book.imageUrl.split('/images/')[1];
+//       const filePath = path.join(__dirname, '..', 'images', filename);
+
+//       fs.unlink(filePath, (err) => {
+//         if (err) {
+//           return res.status(500).json({ error: 'Failed to delete image' });
+//         }
+
+//         Book.deleteOne({ _id: req.params.id })
+//           .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
+//           .catch(error => res.status(400).json({ error }));
 //       });
+//     })
+//     .catch(error => {
+//       res.status(500).json({ error });
+//     });
 // };
-
 exports.deleteBook = (req, res, next) => {
   Book.findOne({ _id: req.params.id })
     .then(book => {
@@ -109,24 +115,6 @@ exports.deleteBook = (req, res, next) => {
       res.status(500).json({ error });
     });
 };
-// exports.deleteBook = (req, res, next) => {
-//   Book.findOne({ _id: req.params.id})
-//       .then(book => {
-//           if (book.userId != req.auth.userId) {
-//               res.status(401).json({message: 'Not authorized'});
-//           } else {
-//               const filename = book.imageUrl.split('/images/')[1];
-//               fs.unlink(`images/${filename}`, () => {
-//                   Book.deleteOne({_id: req.params.id})
-//                       .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
-//                       .catch(error => res.status(401).json({ error }));
-//               });
-//           }
-//       })
-//       .catch( error => {
-//           res.status(500).json({ error });
-//       });
-// };
 
 exports.getAllBooks = (req, res, next) => {
   Book.find().then(
@@ -174,7 +162,7 @@ exports.rateAndGetAverageRating = (req, res, next) => {
       }
 
       const sumRatings = book.ratings.reduce((sum, rating) => sum + rating.grade, 0);
-      book.averageRating = sumRatings / book.ratings.length;
+      book.averageRating = (sumRatings / book.ratings.length).toFixed(1);
 
       book.save()
         .then(() => res.status(200).json(book))
