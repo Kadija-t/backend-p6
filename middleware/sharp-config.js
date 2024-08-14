@@ -7,20 +7,28 @@ async function resizeAndCropImage(req, res, next) {
     const imagePath = req.file.path;
 
     try {
+     
+      sharp.cache(false);
+
+      
       const resizedImage = await sharp(imagePath)
         .resize(350, 260)
         .extract({ left: 0, top: 0, width: 350, height: 260 })
-        .jpeg({ quality: 80 })
+        .jpeg({ quality: 80 }) 
         .toBuffer();
 
-      const originalName = req.file.originalname;
-      const imageExtension = path.extname(originalName);
-      const imageFilename = `${originalName.split('.')[0].split(' ').join('_')}_${Date.now()}${imageExtension}`;
-      const newImagePath = path.join(path.dirname(imagePath), imageFilename);
+      const originalName = req.file.originalname.split('.')[0].split(' ').join('_');
+      const extension = path.extname(req.file.filename);
+      const newFilename = `${originalName}_${Date.now()}${extension}`;
+      const newImagePath = path.join(path.dirname(imagePath), newFilename);
 
+      
       await fs.promises.writeFile(newImagePath, resizedImage);
 
-      req.file.filename = imageFilename; 
+     
+      await fs.promises.unlink(imagePath);
+
+      req.file.filename = newFilename;
       req.file.path = newImagePath;
 
       next();
