@@ -10,13 +10,14 @@ async function resizeAndCropImage(req, res, next) {
       sharp.cache(false);
 
       const resizedImage = await sharp(imagePath)
-        .resize({width: 210,
-           height: 300,  
+        .resize({
+          width: 210,
+          height: 300,  
           fit: sharp.fit.cover,
         })
         .jpeg({ quality: 90 })
         .toBuffer();
-        
+
       const originalName = req.file.originalname
         .split(".")[0]
         .split(" ")
